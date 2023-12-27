@@ -1,5 +1,8 @@
 from ipywidgets import widgets,interact,Layout  
 from plotly.subplots import make_subplots
+import plotly.graph_objects as go
+with open("GetCOVID19DataAndCleaning.py") as f:
+    exec(f.read())
 
 #Header: An image will be read y from it a widget object will be create
 
@@ -13,3 +16,13 @@ HeaderImage=widgets.Image(
 )
 
 #Table: aplicative resume table 
+
+tableFig=go.FigureWidget(go.Table(
+    header=dict(
+        values=["Country<br> name", "Cases", "Deaths"], font=dict(size=12), align="left"),
+        cells=dict(values=[df_summaryCOVID19descendent])
+
+
+
+
+))
