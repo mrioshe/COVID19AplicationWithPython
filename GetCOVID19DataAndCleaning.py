@@ -1,6 +1,7 @@
 import pandas as pd
 import numpy as np
 from datetime import datetime, timedelta
+from scipy.signal import savgol_filter
 
 #Get COVID DATA from Our World Data and save it like dataframe:
 
@@ -38,3 +39,69 @@ def numercialDiff(list):
     return(DiffList)
 
 # Function to get df with determinated country info 
+
+def getDataCountry(CountryName):
+    totalCasesList=[]
+    newCasesList=[]
+    totalDeathsList=[]
+    newDeathsList=[]
+
+    for i in range(len(df_DATA)):
+        if df_DATA['location'][i]==CountryName:
+                totalCasesList.append(df_DATA['total_cases'][i])
+                newCasesList.append(df_DATA['new_cases'][i])
+                totalDeathsList.append(df_DATA['total_deaths'][i])
+                newDeathsList.append(df_DATA['new_deaths'][i])
+
+    df_country=pd.DataFrame(columns=('Date','TotalCases','NewCases','TotalDeaths','NewDeaths'))
+
+    df_country['Date']=np.zeros(len(listDate))
+    df_country['TotalCases']=np.zeros(len(listDate))
+    df_country['NewCases']=np.zeros(len(listDate))
+    df_country['TotalDeaths']=np.zeros(len(listDate))
+    df_country['NewDeaths']=np.zeros(len(listDate))
+
+    # Now the idea is to generate DataFrames with the same number of data (to avoid key errors in the graph)
+    # the columns of the country's DF will be taken from date n (where the first record is) with the data
+    # of the previous lists and the data prior to date n will be taken as 0 (cases, deaths, total cases, total deaths).
+
+    n=len(listDate)-len(newCasesList)
+    df_country['Date']=listDate.copy()
+
+    for i in range(len(newCasesList)):
+             df_country['TotalCases'][i+n]=totalCasesList[i]
+             df_country['NewCases'][i+n]=newCasesList[i]
+             df_country['TotalDeaths'][i+n]=totalDeathsList[i]
+             df_country['NewDeaths'][i+n]=totalDeathsList[i]
+    
+    #Smoothing data and numerical diff data:
+             
+    df_country['NewCasesSmoothed']=savgol_filter(df_country['NewCases'],51,3)
+    df_country['NewDeathsSmoothed']=savgol_filter(df_country['NewDeaths'],51,3)
+    df_country['NewCasesRate']=numercialDiff(df_country['NewCasesSmoothed'])
+    df_country['NewDeathsRate']=numercialDiff(df_country['NewDeathsSmoothed'])
+    df_country['NewCasesRateSmoothed']=savgol_filter(df_country['NewCasesRate'],51,3)
+    df_country['NewDeathsRateSmoothed']=savgol_filter(df_country['NewDeathsRate'],51,3)
+
+    return(df_country)
+
+# Get df to every country:
+# A dictionary is generated that saves all the df of each country with the key equal to the ISO 3166-1 of the respective country.
+
+try:
+     countryList=list(set(df_DATA['location']))
+     countryList.remove('Lower middle income')
+     countryList.remove('Upper middle income')
+     countryList.remove('High income')
+except:
+     countryList=list(set(df_DATA['location']))
+
+     
+dic_countriesDF={}
+
+# Here it takes a few seconds since there is high data processing:
+for i in countryList:
+     dic_countriesDF[i]=getDataCountry(i)
+     print(i," info was uploaded",  (countryList.index(i)+1)/len(countryList), " %" )
+
+
