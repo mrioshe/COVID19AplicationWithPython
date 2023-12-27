@@ -69,10 +69,10 @@ def getDataCountry(CountryName):
     df_country['Date']=listDate.copy()
 
     for i in range(len(newCasesList)):
-             df_country['TotalCases'][i+n]=totalCasesList[i]
-             df_country['NewCases'][i+n]=newCasesList[i]
-             df_country['TotalDeaths'][i+n]=totalDeathsList[i]
-             df_country['NewDeaths'][i+n]=totalDeathsList[i]
+        df_country.loc['TotalCases'][i+n]=totalCasesList[i]
+        df_country.loc['NewCases'][i+n]=newCasesList[i]
+        df_country.loc['TotalDeaths'][i+n]=totalDeathsList[i]
+        df_country.loc['NewDeaths'][i+n]=totalDeathsList[i]
     
     #Smoothing data and numerical diff data:
              
@@ -92,7 +92,15 @@ try:
      countryList=list(set(df_DATA['location']))
      countryList.remove('Lower middle income')
      countryList.remove('Upper middle income')
+     countryList.remove('Low income')
      countryList.remove('High income')
+     countryList.remove('World')
+
+     #countryList.remove('Africa')
+     #countryList.remove('South America')
+     #countryList.remove('Europe')
+     #countryList.remove('Oceania')
+
 except:
      countryList=list(set(df_DATA['location']))
 
@@ -102,6 +110,6 @@ dic_countriesDF={}
 # Here it takes a few seconds since there is high data processing:
 for i in countryList:
      dic_countriesDF[i]=getDataCountry(i)
-     print(i," info was uploaded",  (countryList.index(i)+1)/len(countryList), " %" )
+     print(i," info was uploaded",  round(100*(countryList.index(i)+1)/len(countryList)), " %" )
 
 
