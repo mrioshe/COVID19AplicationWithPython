@@ -55,11 +55,11 @@ def getDataCountry(CountryName):
 
     df_country=pd.DataFrame(columns=('Date','TotalCases','NewCases','TotalDeaths','NewDeaths'))
 
-    df_country['Date']=np.zeros(len(listDate))
-    df_country['TotalCases']=np.zeros(len(listDate))
-    df_country['NewCases']=np.zeros(len(listDate))
-    df_country['TotalDeaths']=np.zeros(len(listDate))
-    df_country['NewDeaths']=np.zeros(len(listDate))
+    #df_country['Date']=np.zeros(len(listDate))
+    #df_country['TotalCases']=np.zeros(len(listDate))
+    #df_country['NewCases']=np.zeros(len(listDate))
+    #df_country['TotalDeaths']=np.zeros(len(listDate))
+    #df_country['NewDeaths']=np.zeros(len(listDate))
 
     # Now the idea is to generate DataFrames with the same number of data (to avoid key errors in the graph)
     # the columns of the country's DF will be taken from date n (where the first record is) with the data
@@ -69,10 +69,10 @@ def getDataCountry(CountryName):
     df_country['Date']=listDate.copy()
 
     for i in range(len(newCasesList)):
-        df_country.loc['TotalCases'][i+n]=totalCasesList[i]
-        df_country.loc['NewCases'][i+n]=newCasesList[i]
-        df_country.loc['TotalDeaths'][i+n]=totalDeathsList[i]
-        df_country.loc['NewDeaths'][i+n]=totalDeathsList[i]
+        df_country['TotalCases'][i+n]=totalCasesList[i]
+        df_country['NewCases'][i+n]=newCasesList[i]
+        df_country['TotalDeaths'][i+n]=totalDeathsList[i]
+        df_country['NewDeaths'][i+n]=totalDeathsList[i]
     
     #Smoothing data and numerical diff data:
              
