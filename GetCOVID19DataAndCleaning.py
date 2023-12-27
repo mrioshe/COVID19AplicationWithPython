@@ -16,7 +16,7 @@ df_ISOCodes['Country names']=list(pd.read_excel("data/country_iso_code.xlsx")['C
 
 #Create a list with dates:
 
-startDate=datetime(2020,1,3).date()
+startDate=datetime(2020,1,10).date()
 #we have to ensure that you have data on the final date, that is why the current date is not taken but 10 days before:
 finalDate=datetime.today().date()-timedelta(days=10) 
 # The datetime type data is taken to the Y-m-d form
@@ -38,6 +38,7 @@ def numercialDiff(list):
             DiffList[i]=(-list[i+2]+8*list[i+1]-8*list[i-1]+list[i-2])/12*h
     return(DiffList)
 
+
 # Function to get df with determinated country info 
 
 def getDataCountry(CountryName):
@@ -54,12 +55,6 @@ def getDataCountry(CountryName):
                 newDeathsList.append(df_DATA['new_deaths'][i])
 
     df_country=pd.DataFrame(columns=('Date','TotalCases','NewCases','TotalDeaths','NewDeaths'))
-
-    #df_country['Date']=np.zeros(len(listDate))
-    #df_country['TotalCases']=np.zeros(len(listDate))
-    #df_country['NewCases']=np.zeros(len(listDate))
-    #df_country['TotalDeaths']=np.zeros(len(listDate))
-    #df_country['NewDeaths']=np.zeros(len(listDate))
 
     # Now the idea is to generate DataFrames with the same number of data (to avoid key errors in the graph)
     # the columns of the country's DF will be taken from date n (where the first record is) with the data
@@ -95,6 +90,12 @@ try:
      countryList.remove('Low income')
      countryList.remove('High income')
      countryList.remove('World')
+     countryList.remove('Europe')
+     countryList.remove('Western Sahara')
+     countryList.remove('Asia')
+     countryList.remove('North America')
+     countryList.remove('South America')
+     countryList.remove('European Union')
 
      #countryList.remove('Africa')
      #countryList.remove('South America')
@@ -111,5 +112,23 @@ dic_countriesDF={}
 for i in countryList:
      dic_countriesDF[i]=getDataCountry(i)
      print(i," info was uploaded",  round(100*(countryList.index(i)+1)/len(countryList)), " %" )
+    
+# Now summary dataframes will be created:
+     
+summaryDeathsList=[]
+summaryCasesList=[]
+
+for i in dic_countriesDF:
+    summaryCasesList.append(dic_countriesDF[i]['TotalCases'][len(listDate)-2])
+    summaryDeathsList.append(dic_countriesDF[i]['TotalDeaths'][len(listDate)-2])
+
+df_summaryCOVID19=pd.DataFrame(columns=('Country Name','Total Cases', 'Total Deaths'))
+df_summaryCOVID19['Country Name']=list(dic_countriesDF.keys())
+df_summaryCOVID19['Total Cases']=summaryCasesList
+df_summaryCOVID19['Total Deaths']=summaryDeathsList
+
+df_summaryCOVID19descendent =df_summaryCOVID19.sort_values('Total Cases', ascending=False)
+df_summaryCOVID19ascendent =df_summaryCOVID19.sort_values('Total Cases', ascending=True)
+df_summaryCOVID19descendent.to_csv("data/summaryCOVID19ascendent.csv",index=False)
 
 
