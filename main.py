@@ -20,9 +20,31 @@ HeaderImage=widgets.Image(
 tableFig=go.FigureWidget(go.Table(
     header=dict(
         values=["Country<br> name", "Cases", "Deaths"], font=dict(size=12), align="left"),
-        cells=dict(values=[df_summaryCOVID19descendent])
-
-
-
-
+        cells=dict(
+            values=[df_summaryCOVID19descendent['Country Name'],df_summaryCOVID19descendent['Total Cases'],df_summaryCOVID19descendent['Total Deaths']]
+            align="left")
 ))
+
+tableFig=tableFig.update_layout(margin={'r':0,'b':20,'t':20,'l':0},
+                                height=900,
+                                width=180,
+                                showlegend=False,
+                                tittle_text=" ",
+                                template='simple_white'
+                                )
+
+#Country selector
+
+optionsList=[]
+for i in range(len(df_summaryCOVID19descendent)-1):
+    optionsList.append((df_summaryCOVID19descendent.index[i]+
+                        '  ' + df_summaryCOVID19descendent['Country Name'][i] 
+                        + ' ('+ str (int (df_summaryCOVID19descendent['Total Cases'][i])) 
+                        +')', len(df_summaryCOVID19descendent)-i-1))
+    
+countrySelector= widgets.Dropdown(
+                options=optionsList,
+                value=2,
+                description='Country: ',
+                layout=Layout(width='30%', height='30px',align = "center")
+                )
